@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventMaster</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+
+<div id="login-page">
+    <header>
+        <h1>EventMaster</h1>
+    </header>
+    <section class="hero">
+        <h2>Welcome Back!</h2>
+        <p>Login to manage and plan your events like a pro.</p>
+        <form id="loginForm" class="login-form">
+            <input type="text" id="username" placeholder="Email/Username" required><br>
+            <input type="password" id="password" placeholder="Password" required><br>
+            <button type="submit" class="cta-button">Login</button>
+        </form>
+        <p class="signup-link">Don't have an account? <a href="#" onclick="toggleSignup()">Sign up</a></p>
+    </section>
+    
+    <section id="signup-section" class="signup-section" style="display: none;">
+        <h2>Create an Account</h2>
+        <form id="userForm" class="signup-form">
+            <input type="text" id="name" placeholder="Full Name" required><br>
+            <input type="email" id="email" placeholder="Email" required><br>
+            <input type="password" id="signupPassword" placeholder="Password" required><br>
+            <button type="submit" class="cta-button">Sign Up</button>
+            <button type="button" class="cta-button cancel-button" onclick="toggleSignup()">Cancel</button>
+        </form>
+    </section>
+</div>
+
+<div id="landing-page" style="display: none;">
+    <header>
+        <h1>EventMaster</h1>
+        <nav>
+            <ul class="nav-menu">
+                <li><a href="./pages/page1/index.html">HOME</a></li>
+                <li><a href="#about">ABOUT US</a></li>
+                <li><a href="#contact">CONTACT</a></li>
+                <li><a href="#services">SERVICES</a></li>
+                <li class="logout"><a href="#" onclick="logout()">LOGOUT</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <h2>Plan, Organize, and Execute Events Like a Pro</h2>
+        <p>Seamless scheduling, guest management, and vendor coordination in one app.</p>
+    </section>
+
+    <section id="admin-panel" class="admin-panel" style="display: none;">
+        <h2>User Management</h2>
+        <button onclick="fetchUsers()" class="cta-button">View All Users</button>
+        <div id="output" class="users-output"></div>
+    </section>
+
+    <section id="services" class="services">
+        <h2>Our Services</h2>
+        <p>We offer a range of event planning services to ensure your events are seamless and unforgettable.</p>
+
+        <div class="services-container">
+            <div class="service">
+                <img src="assets/img/Event.jpg" alt="Event Planning">
+                <h3>Event Planning</h3>
+                <p>From weddings to corporate events, we handle everything to make your event a success.</p>
+                <button class="cta-button" onclick="serviceDetails('event-planning')">Select</button>
+            </div>
+
+            <div class="service">
+                <img src="assets/img/vendor.jpg" alt="Vendor Coordination">
+                <h3>Vendor Coordination</h3>
+                <p>We connect you with the best caterers, decorators, and entertainment providers.</p>
+                <button class="cta-button" onclick="serviceDetails('vendor-coordination')">Select</button>
+            </div>
+
+            <div class="service">
+                <img src="assets/img/guest.jpg" alt="Guest Management">
+                <h3>Guest Management</h3>
+                <p>We ensure smooth RSVP tracking, seating arrangements, and guest communications.</p>
+                <button class="cta-button" onclick="serviceDetails('guest-management')">Select</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="personal-info-form" class="personal-info" style="display: none;">
+        <h2>Fill Your Personal Information</h2>
+        <form onsubmit="submitForm(event)">
+            <input type="text" id="full-name" placeholder="Full Name" required><br>
+            <input type="email" id="client-email" placeholder="Email" required><br>
+            <input type="tel" id="phone" placeholder="Phone Number" required><br>
+            <textarea id="event-details" placeholder="Event Details" required></textarea><br>
+            <button type="submit" class="cta-button">Submit</button>
+            <button type="button" class="cta-button cancel-button" onclick="closeForm()">Cancel</button>
+        </form>
+    </section>
+
+    <section id="about" class="about-us">
+        <h2>About Us</h2>
+        <p>Meet the faces behind EventMaster! We are passionate event planners dedicated to making your events extraordinary.</p>
+        <div class="about-images">
+            <div class="about-person">
+                <img src="assets/img/cortan.jpg" alt="Photo of first person" class="about-image">
+                <p class="about-name">John Cortan</p>
+            </div>
+            <div class="about-person">
+                <img src="assets/img/francisco.jpg" alt="Photo of second person" class="about-image">
+                <p class="about-name">Christian Francisco</p>
+            </div>
+        </div>
+    </section>
+    <section id="contact" class="contact">
+        <h2>Contact Us</h2>
+        <form class="contact-form">
+            <input type="text" id="name" placeholder="Your Name" required><br>
+            <input type="email" id="email" placeholder="Your Email" required><br>
+            <textarea id="message" placeholder="Your Message" required></textarea><br>
+            <button type="submit" class="cta-button">Send Message</button>
+        </form>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 EventMaster. All Rights Reserved.</p>
+    </footer>
+</div>
+
+<script>
+function toggleSignup() {
+    const signupSection = document.getElementById("signup-section");
+    const loginHero = document.querySelector("#login-page .hero");
+
+    if (signupSection.style.display === "none") {
+        signupSection.style.display = "block";
+        loginHero.style.display = "none";
+    } else {
+        signupSection.style.display = "none";
+        loginHero.style.display = "block";
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    if (localStorage.getItem("userId") === "admin@eventmaster.com") {
+        document.getElementById("admin-panel").style.display = "block";
+    }
+});
+
+function fetchUsers() {
+    const API_URL = 'https://demo-api-skills.vercel.app/api/EventOrganizer/users'; 
+
+    axios.get(API_URL)
+        .then(response => {
+            const users = response.data;
+            let outputHTML = "<ul>";
+            users.forEach(user => {
+                outputHTML += `<li><strong>${user.id}</strong> - ${user.email} (${user.name})</li>`;
+            });
+            outputHTML += "</ul>";
+            document.getElementById("output").innerHTML = outputHTML;
+        })
+        .catch(error => {
+            document.getElementById("output").innerHTML = "Error fetching users: " + error.message;
+            console.error("Error:", error);
+        });
+}
+
+document.getElementById("loginForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+    console.log("Login form submitted");
+    document.getElementById("login-page").style.display = "none";
+    document.getElementById("landing-page").style.display = "block";
+});
+
+document.getElementById("userForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+    console.log("Signup form submitted");
+
+    toggleSignup();
+});
+
+</script>
+
+<script defer src="assets/js/script.js"></script>
+
+</body>
+
+</html>
